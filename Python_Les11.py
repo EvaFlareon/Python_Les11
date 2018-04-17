@@ -7,26 +7,23 @@ def open_file(file_json):
     with open(file_json, 'rb') as f:
         data = f.read()
         result = chardet.detect(data)
-    with open(file_json, encoding=result['encoding']) as f:
-        result = json.load(f)
+        s = data.decode(result['encoding'])
+        result_json = json.loads(s)
         result_list = []
         i = 0
-        while i < len(result['rss']['channel']['items']):
-            result_list.append(result['rss']['channel']['items'][i]['description'])
+        while i < len(result_json['rss']['channel']['items']):
+            result_list.append(result_json['rss']['channel']['items'][i]['description'])
             i += 1
         return result_list
 
 
 def list_to_dict(txt_list):
-    i = 0
     dict_word = {}
-    while i < len(txt_list):
-        j = 0
+    for item in txt_list:
+        dict_word[item] = 0
         for len_word in txt_list:
-            if txt_list[i] == len_word:
-                j += 1
-        dict_word[txt_list[i]] = j
-        i += 1
+            if item == len_word:
+                dict_word[item] += 1
     return dict_word
 
 
@@ -50,6 +47,7 @@ def search_word(file_name):
     new_dict = list_to_dict(new_list)
     print(file_name)
     max_word(new_dict)
+    open_file(file_name)
 
 
 search_word('newsafr.json')
